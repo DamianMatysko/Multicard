@@ -40,7 +40,7 @@ public class Login extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         backtoRegisterView = findViewById(R.id.backtoRegisterView);
         buttonLogin = findViewById(R.id.buttonLogin);
-        progressBarLogIn = findViewById(R.id.progressBarLogIn);
+        progressBarLogIn = findViewById(R.id.progressBarLogin);
         forgotPassword = findViewById(R.id.forgotPasswordLink);
         firebaseAuth = FirebaseAuth.getInstance();
 
