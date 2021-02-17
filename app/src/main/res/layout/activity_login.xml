@@ -41,6 +41,7 @@
             android:hint="Password"
             android:inputType="textPersonName"
             android:padding="10dp"
+            android:password="true"
             android:textColor="#10141A"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

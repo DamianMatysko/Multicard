@@ -34,7 +34,6 @@ public class ProfileFragment extends Fragment {
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firebaseFirestore;
     String userID;
-    BottomNavigationView bottomNavigationView;
 
 
     @Nullable
@@ -42,13 +41,11 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-
         logoutButton = (Button) v.findViewById(R.id.logoutButton);
         fullname = (TextView) v.findViewById(R.id.fullNameProfileView);
         email = (TextView) v.findViewById(R.id.emailProfileView);
         verifyEmail = (TextView) v.findViewById(R.id.verifyEmailView);
         verifyEmail.setVisibility(View.INVISIBLE);
-
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -75,7 +72,6 @@ public class ProfileFragment extends Fragment {
                 }
             });
         }
-
         DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -84,25 +80,14 @@ public class ProfileFragment extends Fragment {
                 email.setText(documentSnapshot.getString("email"));
             }
         });
-
-
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getActivity(), Login.class));
                 getActivity().finish();
-
-//                Intent intent = new Intent(v.getContext(), Login.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivity(intent);
-//                finish();
             }
         });
-
-
-
         return v;
     }
-
 }
