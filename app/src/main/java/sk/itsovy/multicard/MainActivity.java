@@ -1,24 +1,35 @@
 package sk.itsovy.multicard;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     private Toolbar mToolbar;
 
-    MenuItem appBarAdd;
-    MenuItem appBarLogout;
+    private EditText editAccountType;
+    private EditText editLink;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,20 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
-
         mToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
-
-
-
-
-
-
-        Menu menu = mToolbar.getMenu();
-        appBarAdd=  menu.findItem(R.id.app_bar_add);
-        appBarLogout =  menu.findItem(R.id.app_bar_logout);
-
 
 
 
@@ -51,7 +50,53 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new ProfileFragment()).commit();
         }
+
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.app_bar_add:
+                        Toast.makeText(MainActivity.this,"Add",Toast.LENGTH_SHORT).show();
+                        //startActivity(new Intent(MainActivity.this, AddCards.class));
+                       // finish();
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+                        View view = inflater.inflate(R.layout.add_dialog, null);
+                        builder.setView(view)
+                                .setTitle("ADD")
+                                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                    }
+                                })
+                                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        String accountType = editAccountType.getText().toString();
+                                        String link = editLink.getText().toString();
+                                        //listener.applyTexts(accountType, link);
+                                    }
+                                });
+                        editAccountType = view.findViewById(R.id.edit_account_type);
+                        editLink = view.findViewById(R.id.edit_link);
+                        builder.show();
+
+                        break;
+                    case R.id.app_bar_logout:
+                        Toast.makeText(MainActivity.this,"Logout",Toast.LENGTH_SHORT).show();
+                        FirebaseAuth.getInstance().signOut();
+                        startActivity(new Intent(MainActivity.this, Login.class));
+                        finish();
+                    default:
+                }
+                return false;
+            }
+        });
+
     }
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -60,13 +105,17 @@ public class MainActivity extends AppCompatActivity {
                     Fragment selectedFragment = null;
                     switch (item.getItemId()) {
                         case R.id.profile:
-                           // appBarAdd.setVisible(false);
-                           // appBarLogout.setVisible(true);
+//                            mToolbar.getMenu().getItem(R.id.app_bar_add).setVisible(false);
+//                            mToolbar.getMenu().getItem(R.id.logoutButton).setVisible(true);
+                            // appBarAdd.setVisible(false);
+                            // appBarLogout.setVisible(true);
                             selectedFragment = new ProfileFragment();
                             break;
                         case R.id.cards:
-                           // appBarAdd.setVisible(false);
-                          //  appBarLogout.setVisible(true);
+                            // appBarAdd.setVisible(false);
+                            //  appBarLogout.setVisible(true);
+//                            mToolbar.getMenu().getItem(R.id.app_bar_add).setVisible(true);
+//                            mToolbar.getMenu().getItem(R.id.logoutButton).setVisible(false);
                             selectedFragment = new CardsFragment();
                             break;
                     }
