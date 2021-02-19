@@ -26,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import org.jetbrains.annotations.Nullable;
 
 public class ProfileFragment extends Fragment {
-    Button logoutButton;
     TextView fullname, email, verifyEmail;
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firebaseFirestore;
@@ -38,7 +37,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        logoutButton = (Button) v.findViewById(R.id.logoutButton);
+
         fullname = (TextView) v.findViewById(R.id.fullNameProfileView);
         email = (TextView) v.findViewById(R.id.emailProfileView);
         verifyEmail = (TextView) v.findViewById(R.id.verifyEmailView);
@@ -75,14 +74,6 @@ public class ProfileFragment extends Fragment {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 fullname.setText(documentSnapshot.getString("fName"));
                 email.setText(documentSnapshot.getString("email"));
-            }
-        });
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getActivity(), Login.class));
-                getActivity().finish();
             }
         });
         return v;

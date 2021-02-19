@@ -3,6 +3,7 @@ package sk.itsovy.multicard;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +23,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
@@ -30,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText editAccountType;
     private EditText editLink;
 
+    String userID;
+    FirebaseAuth firebaseAuth;
+    FirebaseFirestore firebaseFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mToolbar);
 
-
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -76,9 +87,23 @@ public class MainActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         String accountType = editAccountType.getText().toString();
                                         String link = editLink.getText().toString();
-                                        //listener.applyTexts(accountType, link);
+
+                                        userID = firebaseAuth.getCurrentUser().getUid();
+                                        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID).collection("cards").document();
+
+                                        Map<String, Object> user = new HashMap<>();
+                                        user.put("accountType", accountType);
+                                        user.put("link", link);
+                                        documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("TAG", "onSuccess: User card is created " + userID);
+                                                Toast.makeText(MainActivity.this,"User card is created",Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
                                 });
+
                         editAccountType = view.findViewById(R.id.edit_account_type);
                         editLink = view.findViewById(R.id.edit_link);
                         builder.show();

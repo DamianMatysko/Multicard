@@ -113,7 +113,7 @@ public class Register extends AppCompatActivity {
 
                             Toast.makeText(Register.this, "User crated", Toast.LENGTH_SHORT).show();
                             userID = firebaseAuth.getCurrentUser().getUid();
-                            DocumentReference documentReference = firebaseFirestore.collection("users").document(userID); // TODO: 2/17/2021  
+                            DocumentReference documentReference = firebaseFirestore.collection("users").document(userID);
                             Map<String, Object> user = new HashMap<>();
                             user.put("fName", fullName);
                             user.put("email", email);
