@@ -2,6 +2,7 @@ package sk.itsovy.multicard;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -22,6 +25,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -32,9 +37,9 @@ public class CardsFragment extends Fragment {
     FirebaseFirestore firebaseFirestore;
     String userID;
 
-    String[] titles = new String[]{};
-    String[] mDescription= new String[]{};
-    int[] images= new int[]{};
+    String[] titles = new String[]{"test"};
+    String[] mDescription = new String[]{"test"};
+    int[] images = new int[]{R.drawable.facebook};
 
     @Nullable
     @Override
@@ -46,27 +51,67 @@ public class CardsFragment extends Fragment {
         userID = firebaseAuth.getCurrentUser().getUid();
 
 
-          String titles[] = {"Facebook", "Instagram", "Youtube", "Linkedin", "Reddit", "Tumblr", "Twitter", "Snapchat"};
-          String mDescription[] = {"Facebook Description", "Whatsapp Description", "Twitter Description", "Instagram Description", "Youtube Description", "Youtube Description", "Youtube Description", "Youtube Description"};
-          int images[] = {R.drawable.facebook, R.drawable.reddit, R.drawable.twitter, R.drawable.youtube, R.drawable.snapchat, R.drawable.tumblr, R.drawable.instagram, R.drawable.linkedin};
+//          String titles[] = {"Facebook", "Instagram", "Youtube", "Linkedin", "Reddit", "Tumblr", "Twitter", "Snapchat"};
+//          String mDescription[] = {"Facebook Description", "Whatsapp Description", "Twitter Description", "Instagram Description", "Youtube Description", "Youtube Description", "Youtube Description", "Youtube Description"};
+//          int images[] = {R.drawable.facebook, R.drawable.reddit, R.drawable.twitter, R.drawable.youtube, R.drawable.snapchat, R.drawable.tumblr, R.drawable.instagram, R.drawable.linkedin};
 
 
-//        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID).collection("cards").document();
+//        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID).collection("cards").);
 //        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
 //            @Override
 //            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//
 //
 //                titles = increaseArray(titles, documentSnapshot.getString("accountType"));
 //                mDescription = increaseArray(titles, documentSnapshot.getString("link"));
 //               // images = addImage(images, getResources().getIdentifier("@drawable/"+documentSnapshot.getString("accountType").toLowerCase(), "drawable",  getActivity().getPackageName()));
 //                images = addImage(images, R.drawable.facebook);
-//
+//                System.out.println(titles+"  ==  "+mDescription+"  ==  "+images);
+//                System.out.println(documentSnapshot.getString("accountType")+"sssss"+documentSnapshot.getString("link"));
 //            }
 //        });
 
+
+        firebaseFirestore.collection("users").document(userID).collection("cards")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                System.out.println(document.get("accountType").toString() + "    " + document.get("link").toString());
+                                titles = increaseArray(titles, document.get("accountType").toString());
+                                mDescription = increaseArray(titles, document.get("link").toString());
+                                images = addImage(images, R.drawable.facebook);
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "Error: ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+//        DocumentReference docRef = firebaseFirestore.collection("users").document(userID);
+//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    if (document.exists()) {
+//                        Toast.makeText(getActivity(), "Document exist", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Document does not exist", Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Error: ", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+
+
         ListView listView = v.findViewById(R.id.listViewCards);
 
+
+        System.out.println(titles.toString() + "\n" + mDescription.toString());// TODO: 2/24/2021
 
         MyAdapter adapter = new MyAdapter(getContext(), titles, mDescription, images);
         listView.setAdapter(adapter);
@@ -75,21 +120,21 @@ public class CardsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    Toast.makeText(getActivity(), "Facebook Description", Toast.LENGTH_SHORT).show();
-                }
-                if (position == 0) {
-                    Toast.makeText(getActivity(), "Whatsapp Description", Toast.LENGTH_SHORT).show();
-                }
-                if (position == 0) {
-                    Toast.makeText(getActivity(), "Twitter Description", Toast.LENGTH_SHORT).show();
-                }
-                if (position == 0) {
-                    Toast.makeText(getActivity(), "Instagram Description", Toast.LENGTH_SHORT).show();
-                }
-                if (position == 0) {
-                    Toast.makeText(getActivity(), "Youtube Description", Toast.LENGTH_SHORT).show();
-                }
+//                if (position == 0) {
+//                    Toast.makeText(getActivity(), "Facebook Description", Toast.LENGTH_SHORT).show();
+//                }
+//                if (position == 0) {
+//                    Toast.makeText(getActivity(), "Whatsapp Description", Toast.LENGTH_SHORT).show();
+//                }
+//                if (position == 0) {
+//                    Toast.makeText(getActivity(), "Twitter Description", Toast.LENGTH_SHORT).show();
+//                }
+//                if (position == 0) {
+//                    Toast.makeText(getActivity(), "Instagram Description", Toast.LENGTH_SHORT).show();
+//                }
+//                if (position == 0) {
+//                    Toast.makeText(getActivity(), "Youtube Description", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
         return v;
@@ -135,7 +180,7 @@ public class CardsFragment extends Fragment {
         for (int cnt = 0; cnt < theArray.length; cnt++) {
             newArray[cnt] = theArray[cnt];
         }
-        newArray[newArray.length] = newValue;
+        newArray[newArray.length - 1] = newValue;
         return newArray;
     }
 
@@ -146,7 +191,7 @@ public class CardsFragment extends Fragment {
         for (int cnt = 0; cnt < theArray.length; cnt++) {
             newArray[cnt] = theArray[cnt];
         }
-        newArray[newArray.length] = newInt;
+        newArray[newArray.length - 1] = newInt;
         return newArray;
     }
 }
