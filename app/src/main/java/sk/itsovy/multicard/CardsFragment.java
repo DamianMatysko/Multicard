@@ -1,6 +1,8 @@
 package sk.itsovy.multicard;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,13 +39,15 @@ public class CardsFragment extends Fragment {
     FirebaseFirestore firebaseFirestore;
     String userID;
 
-    String[] titles = new String[]{"test"};
-    String[] mDescription = new String[]{"test"};
-    int[] images = new int[]{R.drawable.facebook};
+    static String[] titles = new String[]{};
+    static String[] mDescription = new String[]{};
+    static int[] images = new int[]{};
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
         View v = inflater.inflate(R.layout.fragment_cards, container, false);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -78,11 +82,19 @@ public class CardsFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                System.out.println(document.get("accountType").toString() + "    " + document.get("link").toString());
                                 titles = increaseArray(titles, document.get("accountType").toString());
-                                mDescription = increaseArray(titles, document.get("link").toString());
+                                mDescription = increaseArray(mDescription, document.get("link").toString());
                                 images = addImage(images, R.drawable.facebook);
                             }
+//                            for (int i = 0;i < titles.length;i++){
+//                                System.out.println("++++++++++++++++++++++++++");
+//                                System.out.println(titles[i]);
+//                                System.out.println(mDescription[i]);
+//                                System.out.println(images[i]);
+//                                System.out.println("\n\n\n\n\n\n");
+//                            }
+
+
                         } else {
                             Toast.makeText(getActivity(), "Error: ", Toast.LENGTH_SHORT).show();
                         }
@@ -110,8 +122,14 @@ public class CardsFragment extends Fragment {
 
         ListView listView = v.findViewById(R.id.listViewCards);
 
-
-        System.out.println(titles.toString() + "\n" + mDescription.toString());// TODO: 2/24/2021
+        System.out.println("aejdfhsadjfhajsdhfbajiskbfaiskjhdbaosifbnwSDIPAFBWPSEDFIUBWRPEDUFVGBWERUIDGB");
+        for (int i = 0; i < titles.length; i++) {
+            System.out.println("++++++++++++++++++++++++++");
+            System.out.println(titles[i]);
+            System.out.println(mDescription[i]);
+            System.out.println(images[i]);
+            System.out.println("\n\n\n\n\n\n");
+        }
 
         MyAdapter adapter = new MyAdapter(getContext(), titles, mDescription, images);
         listView.setAdapter(adapter);
@@ -120,21 +138,8 @@ public class CardsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                if (position == 0) {
-//                    Toast.makeText(getActivity(), "Facebook Description", Toast.LENGTH_SHORT).show();
-//                }
-//                if (position == 0) {
-//                    Toast.makeText(getActivity(), "Whatsapp Description", Toast.LENGTH_SHORT).show();
-//                }
-//                if (position == 0) {
-//                    Toast.makeText(getActivity(), "Twitter Description", Toast.LENGTH_SHORT).show();
-//                }
-//                if (position == 0) {
-//                    Toast.makeText(getActivity(), "Instagram Description", Toast.LENGTH_SHORT).show();
-//                }
-//                if (position == 0) {
-//                    Toast.makeText(getActivity(), "Youtube Description", Toast.LENGTH_SHORT).show();
-//                }
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(parent.get));
+                startActivity(browserIntent);
             }
         });
         return v;
@@ -175,23 +180,21 @@ public class CardsFragment extends Fragment {
 
     public String[] increaseArray(String[] theArray, String newValue) {
         int i = theArray.length;
-        int n = ++i;
-        String[] newArray = new String[n];
+        String[] newArray = new String[++i];
         for (int cnt = 0; cnt < theArray.length; cnt++) {
             newArray[cnt] = theArray[cnt];
         }
-        newArray[newArray.length - 1] = newValue;
+        newArray[theArray.length] = newValue;
         return newArray;
     }
 
     public int[] addImage(int[] theArray, int newInt) {
         int i = theArray.length;
-        int n = ++i;
-        int[] newArray = new int[n];
+        int[] newArray = new int[++i];
         for (int cnt = 0; cnt < theArray.length; cnt++) {
             newArray[cnt] = theArray[cnt];
         }
-        newArray[newArray.length - 1] = newInt;
+        newArray[theArray.length] = newInt;
         return newArray;
     }
 }
