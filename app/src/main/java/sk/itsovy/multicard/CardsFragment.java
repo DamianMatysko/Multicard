@@ -1,5 +1,6 @@
 package sk.itsovy.multicard;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -55,26 +56,6 @@ public class CardsFragment extends Fragment {
         userID = firebaseAuth.getCurrentUser().getUid();
 
 
-//          String titles[] = {"Facebook", "Instagram", "Youtube", "Linkedin", "Reddit", "Tumblr", "Twitter", "Snapchat"};
-//          String mDescription[] = {"Facebook Description", "Whatsapp Description", "Twitter Description", "Instagram Description", "Youtube Description", "Youtube Description", "Youtube Description", "Youtube Description"};
-//          int images[] = {R.drawable.facebook, R.drawable.reddit, R.drawable.twitter, R.drawable.youtube, R.drawable.snapchat, R.drawable.tumblr, R.drawable.instagram, R.drawable.linkedin};
-
-
-//        DocumentReference documentReference = firebaseFirestore.collection("users").document(userID).collection("cards").);
-//        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-//
-//                titles = increaseArray(titles, documentSnapshot.getString("accountType"));
-//                mDescription = increaseArray(titles, documentSnapshot.getString("link"));
-//               // images = addImage(images, getResources().getIdentifier("@drawable/"+documentSnapshot.getString("accountType").toLowerCase(), "drawable",  getActivity().getPackageName()));
-//                images = addImage(images, R.drawable.facebook);
-//                System.out.println(titles+"  ==  "+mDescription+"  ==  "+images);
-//                System.out.println(documentSnapshot.getString("accountType")+"sssss"+documentSnapshot.getString("link"));
-//            }
-//        });
-
-
         firebaseFirestore.collection("users").document(userID).collection("cards")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -84,16 +65,9 @@ public class CardsFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 titles = increaseArray(titles, document.get("accountType").toString());
                                 mDescription = increaseArray(mDescription, document.get("link").toString());
-                                images = addImage(images, R.drawable.facebook);
+                                int id = getContext().getResources().getIdentifier(document.get("accountType").toString().toLowerCase(), "drawable", getContext().getPackageName());
+                                images = addImage(images, id);
                             }
-//                            for (int i = 0;i < titles.length;i++){
-//                                System.out.println("++++++++++++++++++++++++++");
-//                                System.out.println(titles[i]);
-//                                System.out.println(mDescription[i]);
-//                                System.out.println(images[i]);
-//                                System.out.println("\n\n\n\n\n\n");
-//                            }
-
 
                         } else {
                             Toast.makeText(getActivity(), "Error: ", Toast.LENGTH_SHORT).show();
@@ -102,43 +76,32 @@ public class CardsFragment extends Fragment {
                 });
 
 
-//        DocumentReference docRef = firebaseFirestore.collection("users").document(userID);
-//        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-//                        Toast.makeText(getActivity(), "Document exist", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(getActivity(), "Document does not exist", Toast.LENGTH_SHORT).show();
-//                    }
-//                } else {
-//                    Toast.makeText(getActivity(), "Error: ", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
-
         ListView listView = v.findViewById(R.id.listViewCards);
-
-        System.out.println("aejdfhsadjfhajsdhfbajiskbfaiskjhdbaosifbnwSDIPAFBWPSEDFIUBWRPEDUFVGBWERUIDGB");
-        for (int i = 0; i < titles.length; i++) {
-            System.out.println("++++++++++++++++++++++++++");
-            System.out.println(titles[i]);
-            System.out.println(mDescription[i]);
-            System.out.println(images[i]);
-            System.out.println("\n\n\n\n\n\n");
-        }
 
         MyAdapter adapter = new MyAdapter(getContext(), titles, mDescription, images);
         listView.setAdapter(adapter);
+
+        titles = new String[]{};
+        mDescription = new String[]{};
+        images = new int[]{};
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(parent.get));
+
+                TextView selectedText = (TextView) view.findViewById(R.id.title2);
+
+
+                System.out.println("+++++++++++++++++++++++++++++++++++++");
+                System.out.println(selectedText.getText().toString());
+
+                String url = selectedText.getText().toString();
+                if (!url.startsWith("http://") && !url.startsWith("https://"))
+                    url = "http://" + url;
+
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(browserIntent);
             }
         });
