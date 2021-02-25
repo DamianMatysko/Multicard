@@ -44,6 +44,8 @@ public class CardsFragment extends Fragment {
     static String[] mDescription = new String[]{};
     static int[] images = new int[]{};
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,6 +83,7 @@ public class CardsFragment extends Fragment {
         MyAdapter adapter = new MyAdapter(getContext(), titles, mDescription, images);
         listView.setAdapter(adapter);
 
+
         titles = new String[]{};
         mDescription = new String[]{};
         images = new int[]{};
@@ -89,17 +92,10 @@ public class CardsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 TextView selectedText = (TextView) view.findViewById(R.id.title2);
-
-
-                System.out.println("+++++++++++++++++++++++++++++++++++++");
-                System.out.println(selectedText.getText().toString());
-
                 String url = selectedText.getText().toString();
                 if (!url.startsWith("http://") && !url.startsWith("https://"))
                     url = "http://" + url;
-
 
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(browserIntent);
@@ -108,9 +104,7 @@ public class CardsFragment extends Fragment {
         return v;
     }
 
-
     class MyAdapter extends ArrayAdapter<String> {
-
         Context context;
         String rTitle[];
         String rDescription[];
@@ -160,4 +154,6 @@ public class CardsFragment extends Fragment {
         newArray[theArray.length] = newInt;
         return newArray;
     }
+
+
 }

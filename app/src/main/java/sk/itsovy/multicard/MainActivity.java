@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.getMenu().findItem(R.id.profile).setChecked(true);
+
+
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         //I added this if statement to keep the selected fragment when rotating the device
         if (savedInstanceState == null) {
@@ -65,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.app_bar_add:
-                        Toast.makeText(MainActivity.this,"Add",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Add", Toast.LENGTH_SHORT).show();
                         //startActivity(new Intent(MainActivity.this, AddCards.class));
-                       // finish();
+                        // finish();
 
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -98,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 Log.d("TAG", "onSuccess: User card is created " + userID);
-                                                Toast.makeText(MainActivity.this,"User card is created",Toast.LENGTH_SHORT).show();
+
+                                                Toast.makeText(MainActivity.this, "User card is created", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                     case R.id.app_bar_logout:
-                        Toast.makeText(MainActivity.this,"Logout",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Logout", Toast.LENGTH_SHORT).show();
                         FirebaseAuth.getInstance().signOut();
                         startActivity(new Intent(MainActivity.this, Login.class));
                         finish();
@@ -119,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
 
     }
 
@@ -129,19 +135,19 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Fragment selectedFragment = null;
                     switch (item.getItemId()) {
-                        case R.id.profile:
-//                            mToolbar.getMenu().getItem(R.id.app_bar_add).setVisible(false);
-//                            mToolbar.getMenu().getItem(R.id.logoutButton).setVisible(true);
-                            // appBarAdd.setVisible(false);
-                            // appBarLogout.setVisible(true);
-                            selectedFragment = new ProfileFragment();
-                            break;
                         case R.id.cards:
                             // appBarAdd.setVisible(false);
                             //  appBarLogout.setVisible(true);
 //                            mToolbar.getMenu().getItem(R.id.app_bar_add).setVisible(true);
 //                            mToolbar.getMenu().getItem(R.id.logoutButton).setVisible(false);
                             selectedFragment = new CardsFragment();
+                            break;
+                        case R.id.profile:
+//                            mToolbar.getMenu().getItem(R.id.app_bar_add).setVisible(false);
+//                            mToolbar.getMenu().getItem(R.id.logoutButton).setVisible(true);
+                            // appBarAdd.setVisible(false);
+                            // appBarLogout.setVisible(true);
+                            selectedFragment = new ProfileFragment();
                             break;
                     }
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -156,6 +162,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.top_bar, menu);
         return true;
+    }
+
+
+    public void resetFragment() {
+        Fragment frg = null;
+        frg = getSupportFragmentManager().findFragmentById(R.id.cards);
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(frg);
+        ft.attach(frg);
+        ft.commit();
     }
 }
 
